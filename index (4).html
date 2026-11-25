@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shakllar darsi — rang, o'lcham, joylashuv</title>
+<style>
+  :root{
+    --board:#1f3d2f;
+    --board-line:#3a5c48;
+    --chalk:#f3ede1;
+    --chalk-dim:#c9c0ab;
+    --accent:#e8b04b;
+    --accent2:#e0714a;
+    --card-bg:#2a4a3a;
+    --card-border:#4a6b57;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      repeating-linear-gradient(var(--board-line) 0 1px, transparent 1px 32px),
+      var(--board);
+    font-family:'Trebuchet MS','Segoe UI',sans-serif;
+    color:var(--chalk);
+    padding:32px 20px 60px;
+  }
+  h1{
+    text-align:center;
+    font-size:clamp(24px,4vw,38px);
+    letter-spacing:1px;
+    margin-bottom:4px;
+    text-shadow:2px 2px 0 rgba(0,0,0,.25);
+  }
+  .subtitle{
+    text-align:center;
+    color:var(--chalk-dim);
+    margin-bottom:36px;
+    font-size:15px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:22px;
+    max-width:1100px;
+    margin:0 auto;
+  }
+  .card{
+    background:var(--card-bg);
+    border:2px dashed var(--card-border);
+    border-radius:14px;
+    padding:16px;
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--accent);
+    border-bottom:1px solid var(--card-border);
+    padding-bottom:8px;
+  }
+  .stage{
+    background:rgba(0,0,0,.18);
+    border-radius:10px;
+    height:180px;
+    display:flex;
+    align-items:center;
+    padding:14px;
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .stage.pos-markazda{justify-content:center;}
+  .stage.pos-chapda{justify-content:flex-start;}
+  .stage.pos-ongda{justify-content:flex-end;}
+  .stage.pos-yuqorida{align-items:flex-start;justify-content:center;}
+  .stage.pos-pastda{align-items:flex-end;justify-content:center;}
+
+  .shape-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+  }
+  .shape{
+    width:60px;height:60px;
+    background:transparent;
+    border:2px dashed var(--chalk-dim);
+    transition:all .2s ease;
+  }
+  .doira{border-radius:50%;}
+  .uchburchak{
+    width:0;height:0;background:transparent!important;
+    border:none;
+    border-left:30px solid transparent;
+    border-right:30px solid transparent;
+    border-bottom:52px solid var(--chalk-dim);
+  }
+  .label{
+    font-size:13px;
+    color:var(--chalk);
+    max-width:140px;
+    text-align:center;
+    word-break:break-word;
+  }
+
+  .controls{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px 10px;
+  }
+  .field{display:flex;flex-direction:column;gap:3px;}
+  .field.full{grid-column:1 / -1;}
+  label{font-size:11px;color:var(--chalk-dim);}
+  input[type=text],input[type=number],select{
+    background:var(--board);
+    border:1px solid var(--card-border);
+    color:var(--chalk);
+    border-radius:6px;
+    padding:6px 8px;
+    font-size:13px;
+    width:100%;
+  }
+  input::placeholder{color:#7d8f83;}
+  input[type=number]{-moz-appearance:textfield;}
+
+  footer{
+    text-align:center;
+    color:var(--chalk-dim);
+    font-size:12px;
+    margin-top:40px;
+  }
+</style>
+</head>
+<body>
+
+<h1>✏️ Shakllar darsi</h1>
+<p class="subtitle">Har bir shakl uchun rang, o'lcham, joylashuv va yozuvni o'zingiz kiriting</p>
+
+<div class="grid" id="grid"></div>
+
+<footer>O'quvchi qiymatlarni to'ldirgach, shakl darhol o'zgaradi</footer>
+
+<script>
+const shapes = [
+  {id:'s1', name:'Doira', cls:'doira'},
+  {id:'s2', name:"Kvadrat", cls:''},
+  {id:'s3', name:"To'g'ri to'rtburchak", cls:''},
+  {id:'s4', name:'Uchburchak', cls:'uchburchak'}
+];
+
+const grid = document.getElementById('grid');
+
+shapes.forEach(sh=>{
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <h2>${sh.name}</h2>
+    <div class="stage pos-markazda" id="stage-${sh.id}">
+      <div class="shape-wrap">
+        <div class="shape ${sh.cls}" id="shape-${sh.id}"></div>
+        <div class="label" id="label-${sh.id}"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="field">
+        <label>Rang</label>
+        <input type="text" id="color-${sh.id}" placeholder="masalan: qizil yoki #ff0000">
+      </div>
+      <div class="field">
+        <label>O'lcham (px)</label>
+        <input type="number" id="size-${sh.id}" placeholder="masalan: 80">
+      </div>
+      <div class="field full">
+        <label>Joylashuv</label>
+        <select id="pos-${sh.id}">
+          <option value="markazda">Markazda</option>
+          <option value="chapda">Chapda</option>
+          <option value="ongda">O'ngda</option>
+          <option value="yuqorida">Yuqorida</option>
+          <option value="pastda">Pastda</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>Yozuv</label>
+        <input type="text" id="text-${sh.id}" placeholder="shakl ostiga yozuv kiriting">
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+function applyUpdate(sh){
+  const color = document.getElementById(`color-${sh.id}`).value.trim();
+  const size = document.getElementById(`size-${sh.id}`).value.trim();
+  const pos = document.getElementById(`pos-${sh.id}`).value;
+  const text = document.getElementById(`text-${sh.id}`).value.trim();
+
+  const shapeEl = document.getElementById(`shape-${sh.id}`);
+  const stageEl = document.getElementById(`stage-${sh.id}`);
+  const labelEl = document.getElementById(`label-${sh.id}`);
+
+  stageEl.className = 'stage pos-' + pos;
+
+  const px = size ? parseInt(size) : 60;
+
+  if(sh.cls === 'uchburchak'){
+    shapeEl.style.borderLeftWidth = (px/2)+'px';
+    shapeEl.style.borderRightWidth = (px/2)+'px';
+    shapeEl.style.borderBottomWidth = (px*0.87)+'px';
+    if(color) shapeEl.style.borderBottomColor = color;
+  } else {
+    shapeEl.style.width = px+'px';
+    shapeEl.style.height = px+'px';
+    if(color){
+      shapeEl.style.background = color;
+      shapeEl.style.borderStyle = 'solid';
+      shapeEl.style.borderColor = color;
+    } else {
+      shapeEl.style.background = 'transparent';
+      shapeEl.style.borderStyle = 'dashed';
+    }
+    if(sh.name === "Kvadrat") shapeEl.style.borderRadius = '4px';
+    if(sh.name === "To'g'ri to'rtburchak"){
+      shapeEl.style.width = (px*1.5)+'px';
+      shapeEl.style.borderRadius = '4px';
+    }
+  }
+  labelEl.textContent = text;
+}
+
+shapes.forEach(sh=>{
+  ['color','size','pos','text'].forEach(f=>{
+    document.getElementById(`${f}-${sh.id}`).addEventListener('input', ()=>applyUpdate(sh));
+  });
+  applyUpdate(sh);
+});
+</script>
+
+</body>
+</html>
