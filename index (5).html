@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 ta asosiy JavaScript/CSS misoli</title>
+<style>
+  :root{
+    --green: #1f7a4d;
+    --green-dark: #145c38;
+    --green-light: #e8f5ee;
+    --paper: #ffffff;
+    --ink: #1b2b22;
+    --muted: #5c6b62;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(180deg, var(--green) 0%, var(--green-dark) 260px, var(--green-light) 260px);
+    color: var(--ink);
+    padding-bottom: 60px;
+  }
+  header{
+    text-align:center;
+    padding: 40px 20px 60px;
+    color: white;
+  }
+  header h1{
+    margin:0 0 8px;
+    font-size: 28px;
+  }
+  header p{
+    margin:0;
+    opacity:0.9;
+    font-size:15px;
+  }
+  .grid{
+    max-width: 1000px;
+    margin: -20px auto 0;
+    padding: 0 20px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .card{
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    border: 1px solid #dcece2;
+  }
+  .card h3{
+    margin:0 0 4px;
+    font-size:16px;
+    color: var(--green-dark);
+  }
+  .card .num{
+    display:inline-block;
+    background: var(--green);
+    color:white;
+    font-size:12px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom:8px;
+  }
+  .card p.desc{
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  button{
+    background: var(--green);
+    color:white;
+    border:none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  button:hover{ background: var(--green-dark); }
+  .output{
+    margin-top: 12px;
+    font-size: 14px;
+    min-height: 20px;
+  }
+  .hidden{ display:none; }
+
+  /* 1-misol: savol/javob toggle */
+  .qa-box{
+    background: var(--green-light);
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+  }
+
+  /* 3-misol: matn hajmi */
+  #resizeText{
+    font-size: 16px;
+    transition: font-size 0.15s ease;
+  }
+  input[type=range]{ width:100%; }
+
+  /* 4-misol: fon rangi */
+  .colorBox{
+    width:100%;
+    height:60px;
+    border-radius:8px;
+    margin-top:10px;
+    transition: background 0.3s ease;
+    background:#f0f0f0;
+  }
+
+  /* 6-misol: akkordion */
+  .accordion-item{
+    border:1px solid #dcece2;
+    border-radius:8px;
+    margin-top:6px;
+    overflow:hidden;
+  }
+  .accordion-head{
+    padding:8px 10px;
+    background: var(--green-light);
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+  }
+  .accordion-body{
+    padding: 0 10px;
+    max-height:0;
+    overflow:hidden;
+    transition: max-height 0.25s ease, padding 0.25s ease;
+    font-size:13px;
+    color: var(--muted);
+  }
+  .accordion-body.open{
+    max-height:200px;
+    padding: 8px 10px;
+  }
+
+  /* 7-misol: progress bar */
+  .progress-track{
+    width:100%;
+    background:#e5e5e5;
+    border-radius: 20px;
+    height: 16px;
+    overflow:hidden;
+    margin-top:10px;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background: var(--green);
+    transition: width 0.3s ease;
+  }
+
+  /* 8-misol: dinamik ro'yxat */
+  #todoInput{
+    padding:6px 8px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:14px;
+    width: 60%;
+  }
+  #todoList{
+    list-style:none;
+    padding:0;
+    margin-top:10px;
+    font-size:14px;
+  }
+  #todoList li{
+    background: var(--green-light);
+    padding:6px 8px;
+    border-radius:6px;
+    margin-bottom:6px;
+    display:flex;
+    justify-content:space-between;
+  }
+  #todoList li span.del{
+    cursor:pointer;
+    color:#b33;
+    font-weight:bold;
+  }
+
+  /* 9-misol: hover kartochka */
+  .hoverCard{
+    margin-top:10px;
+    padding:16px;
+    background: var(--green);
+    color:white;
+    border-radius:10px;
+    text-align:center;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .hoverCard:hover{
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+
+  /* 10-misol: tablar */
+  .tab-buttons{ display:flex; gap:6px; margin-top:10px; }
+  .tab-buttons button{
+    background: #ddd;
+    color: var(--ink);
+    font-size:13px;
+    padding:6px 10px;
+  }
+  .tab-buttons button.active{
+    background: var(--green);
+    color:white;
+  }
+  .tab-content{
+    margin-top:10px;
+    font-size:13px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🟢 10 ta asosiy dasturlash misoli</h1>
+  <p>Har bir kartochka — bitta texnika. Kodini pastda ko'rasiz, tugmalarni bosib sinab ko'ring.</p>
+</header>
+
+<div class="grid">
+
+  <!-- 1. Tugma bosilganda matn/savol chiqishi -->
+  <div class="card">
+    <span class="num">1-misol</span>
+    <h3>Tugma bosilganda savol chiqishi</h3>
+    <p class="desc">display:none / block orqali matnni yashirish va ko'rsatish</p>
+    <button onclick="toggleQuestion()">Savollar</button>
+    <div id="qaBox" class="qa-box hidden">
+      <b>Savol:</b> JavaScript qanday til?<br>
+      <b>Javob:</b> U veb-sahifalarni interaktiv qiladigan dasturlash tili.
+    </div>
+  </div>
+
+  <!-- 2. Taymer / sekundomer -->
+  <div class="card">
+    <span class="num">2-misol</span>
+    <h3>Taymer (sekundomer)</h3>
+    <p class="desc">setInterval() yordamida vaqtni sanash</p>
+    <button onclick="startTimer()">Boshlash</button>
+    <button onclick="stopTimer()">To'xtatish</button>
+    <button onclick="resetTimer()">Nolga</button>
+    <div class="output" id="timerOutput">0 soniya</div>
+  </div>
+
+  <!-- 3. Matn o'lchamini o'zgartirish -->
+  <div class="card">
+    <span class="num">3-misol</span>
+    <h3>Matn razmerini o'zgartirish</h3>
+    <p class="desc">input range orqali font-size ni real vaqtda o'zgartirish</p>
+    <input type="range" min="12" max="48" value="16" oninput="resizeTextFn(this.value)">
+    <p id="resizeText">Bu matn kattalashadi yoki kichraydi</p>
+  </div>
+
+  <!-- 4. Fon rangini o'zgartirish -->
+  <div class="card">
+    <span class="num">4-misol</span>
+    <h3>Fon rangini tanlash</h3>
+    <p class="desc">input type="color" orqali dinamik stil o'zgartirish</p>
+    <input type="color" value="#1f7a4d" oninput="changeColor(this.value)">
+    <div class="colorBox" id="colorBox"></div>
+  </div>
+
+  <!-- 5. Modal oyna -->
+  <div class="card">
+    <span class="num">5-misol</span>
+    <h3>Modal (popup) oyna</h3>
+    <p class="desc">Element ustiga qatlam sifatida chiqadigan oyna</p>
+    <button onclick="openModal()">Oynani ochish</button>
+  </div>
+
+  <!-- 6. Akkordion -->
+  <div class="card">
+    <span class="num">6-misol</span>
+    <h3>Akkordion (savol-javob ro'yxati)</h3>
+    <p class="desc">Bosilganda ichidagi matn ochilib-yopiladigan blok</p>
+    <div class="accordion-item">
+      <div class="accordion-head" onclick="toggleAccordion(this)">HTML nima?</div>
+      <div class="accordion-body">HTML — sahifaning tuzilishini yaratuvchi belgilash tili.</div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-head" onclick="toggleAccordion(this)">CSS nima?</div>
+      <div class="accordion-body">CSS — sahifaning tashqi ko'rinishini (rang, shrift, joylashuv) belgilaydi.</div>
+    </div>
+  </div>
+
+  <!-- 7. Progress bar -->
+  <div class="card">
+    <span class="num">7-misol</span>
+    <h3>Progress bar (jarayon chizig'i)</h3>
+    <p class="desc">Tugma bosilganda foiz oshib boradigan chiziq</p>
+    <button onclick="startProgress()">Boshlash</button>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- 8. Dinamik ro'yxat -->
+  <div class="card">
+    <span class="num">8-misol</span>
+    <h3>Vazifalar ro'yxati (to-do)</h3>
+    <p class="desc">Input orqali yangi elementlarni ro'yxatga qo'shish/o'chirish</p>
+    <input type="text" id="todoInput" placeholder="Vazifa yozing...">
+    <button onclick="addTodo()">Qo'shish</button>
+    <ul id="todoList"></ul>
+  </div>
+
+  <!-- 9. Hover animatsiya -->
+  <div class="card">
+    <span class="num">9-misol</span>
+    <h3>Sichqoncha ustiga borganda animatsiya</h3>
+    <p class="desc">CSS :hover va transition orqali effekt</p>
+    <div class="hoverCard">Menga sichqonchani olib keling</div>
+  </div>
+
+  <!-- 10. Tablar -->
+  <div class="card">
+    <span class="num">10-misol</span>
+    <h3>Tab (bo'lim) almashtirish</h3>
+    <p class="desc">Tugmalar orqali turli kontentni ko'rsatish</p>
+    <div class="tab-buttons">
+      <button class="active" onclick="switchTab(0,this)">Tab 1</button>
+      <button onclick="switchTab(1,this)">Tab 2</button>
+      <button onclick="switchTab(2,this)">Tab 3</button>
+    </div>
+    <div class="tab-content" id="tabContent">Bu — birinchi tab matni.</div>
+  </div>
+
+</div>
+
+<script>
+// 1-misol: savol chiqarish
+function toggleQuestion(){
+  const box = document.getElementById('qaBox');
+  box.classList.toggle('hidden');
+}
+
+// 2-misol: taymer
+let timerSeconds = 0;
+let timerInterval = null;
+function startTimer(){
+  if(timerInterval) return;
+  timerInterval = setInterval(()=>{
+    timerSeconds++;
+    document.getElementById('timerOutput').textContent = timerSeconds + " soniya";
+  },1000);
+}
+function stopTimer(){
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+function resetTimer(){
+  stopTimer();
+  timerSeconds = 0;
+  document.getElementById('timerOutput').textContent = "0 soniya";
+}
+
+// 3-misol: matn razmerini o'zgartirish
+function resizeTextFn(value){
+  document.getElementById('resizeText').style.fontSize = value + "px";
+}
+
+// 4-misol: fon rangini o'zgartirish
+function changeColor(color){
+  document.getElementById('colorBox').style.background = color;
+}
+
+// 5-misol: modal oyna
+function openModal(){
+  const overlay = document.createElement('div');
+  overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:999;";
+  overlay.innerHTML = `
+    <div style="background:white;padding:24px;border-radius:12px;max-width:320px;text-align:center;">
+      <h3 style="margin-top:0;color:#145c38;">Salom!</h3>
+      <p>Bu — modal oynaga misol. Uni yopish uchun pastdagi tugmani bosing.</p>
+      <button onclick="this.closest('div[style*=fixed]').remove()">Yopish</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+// 6-misol: akkordion
+function toggleAccordion(headEl){
+  const body = headEl.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// 7-misol: progress bar
+function startProgress(){
+  const fill = document.getElementById('progressFill');
+  let percent = 0;
+  fill.style.width = "0%";
+  const interval = setInterval(()=>{
+    percent += 10;
+    fill.style.width = percent + "%";
+    if(percent >= 100) clearInterval(interval);
+  },200);
+}
+
+// 8-misol: to-do ro'yxat
+function addTodo(){
+  const input = document.getElementById('todoInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const li = document.createElement('li');
+  li.innerHTML = `<span>${text}</span><span class="del" onclick="this.parentElement.remove()">✕</span>`;
+  document.getElementById('todoList').appendChild(li);
+  input.value = "";
+}
+
+// 10-misol: tablar
+const tabTexts = [
+  "Bu — birinchi tab matni.",
+  "Bu — ikkinchi tab matni. Har bir tugma alohida kontent ko'rsatadi.",
+  "Bu — uchinchi tab matni. Tab tugmalari orqali sahifa ichida navigatsiya qilinadi."
+];
+function switchTab(index, btnEl){
+  document.getElementById('tabContent').textContent = tabTexts[index];
+  document.querySelectorAll('.tab-buttons button').forEach(b=>b.classList.remove('active'));
+  btnEl.classList.add('active');
+}
+</script>
+
+</body>
+</html>
